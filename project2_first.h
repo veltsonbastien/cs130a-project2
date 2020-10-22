@@ -1,10 +1,8 @@
 #ifndef PROJECT2FIRST
 #define PROJECT2FIRST
 
-#include <string>
-//include fstream for the read and write
-#include <fstream> 
 using namespace std; 
+#include <string>
 
 class Dictionary {
  
