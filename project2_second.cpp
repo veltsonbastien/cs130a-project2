@@ -3,5 +3,6 @@
 
 int main (int argc, char* argv[]){
     //in here we'll take care of getting the info 
+    Dictionary::readFromFile(argv[1]);
     return 0; 
 }

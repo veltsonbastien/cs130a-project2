@@ -1,18 +1,22 @@
 #ifndef PROJECT2FIRST
 #define PROJECT2FIRST
 
-using namespace std; 
+using namespace std;
+#include "hash24.h" 
 #include <string>
+#include <vector> 
+#include <utility>
 
 class Dictionary {
  
  private: 
-  
-
+  //save the initial hash
+  Hash24 primaryHash; 
+  //Hash Table Vector
+  vector<pair<string, pair<vector<string>*,Hash24>>> hashtable; 
 
  public: 
  //default (probably) just for dev purposes
- Dictionary(); 
 
  //constructor with string fname and int tsize
  Dictionary(string fname, int tsize); 
