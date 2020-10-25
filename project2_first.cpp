@@ -7,6 +7,8 @@ using namespace std;
 #include <vector>
 #include <utility>
 
+Dictionary::Dictionary(){
+}
 
 Dictionary::Dictionary(string fname, int tsize){
   //the Constructor for the Dictionary class: 
@@ -345,11 +347,11 @@ Dictionary::Dictionary(string fname, int tsize){
 
   //the average tries 
   averageHashesTried = 
-  (1*oneTry + 2*twoTries + 3*threeTries + 4*fourTries + 5*fiveTries
+  static_cast<double>(1*oneTry + 2*twoTries + 3*threeTries + 4*fourTries + 5*fiveTries
   +6*sixTries + 7*sevenTries + 8*eightTries + 9*nineTries + 10*tenTries
   +11*elevenTries + 12*twelveTries + 13*thirteenTries + 14*fourteenTries
   +15*fifteenTries + 16*sixteenTries + 17*seventeenTries + 18*eighteenTries 
-  +19*nineteenTries + 20*twentyTries)/(oneTry+twoTries+threeTries+fourTries+fiveTries+sixTries+
+  +19*nineteenTries + 20*twentyTries)/static_cast<double>(oneTry+twoTries+threeTries+fourTries+fiveTries+sixTries+
                                       sevenTries+eightTries+nineTries+tenTries+elevenTries+twelveTries
                                       +thirteenTries+fourteenTries+fifteenTries+sixteenTries+
                                       seventeenTries+eighteenTries+nineteenTries+twentyTries); 
@@ -358,21 +360,39 @@ Dictionary::Dictionary(string fname, int tsize){
 
 }
 
- bool find(string word){
-   //boolean for finding word 
-   //return true if found, false if not 
-   return 0; //just for now
- }
- 
+ bool Dictionary::find(string word){
+   //boolean for finding word return true if found, false if not 
+   
+   //Does the hash of this word, equal to the word
+   if( (hashtable.at(primaryHash.hash(word)).first).compare(word) != 0 ){
+   
+    if(hashtable.at(primaryHash.hash(word)).second.first != nullptr && hashtable.at(primaryHash.hash(word)).second.first->at( 
+      (hashtable.at(primaryHash.hash(word)).second.second).hash(word)).compare(word) == 0 ){
+      cout<<word<<" not found"<<endl;
+      return true; 
+    }
+      cout<<word<<" not found"<<endl;
+      return false;
+   }
+    cout<<word<<" found"<<endl;
+    return true; 
+   }
+
  //writeToFile 
- void writeToFile(string fName){
+ void Dictionary::writeToFile(string fName){
     //use the fstream 
+    // Object to write in file
+    ofstream dictionary_object;
+    // open file
+    dictionary_object.open(fName, ios::app);
+    // write to file
+    dictionary_object.write((char*)&*this, sizeof(this));
  }
 
  //readFromFile 
  static Dictionary readFromFile(string fName){
   //use ifstream to get the size:
-    ifstream readWriteObject; 
+  ifstream readWriteObject; 
   string line; 
   
   //make sure to pass the smaller dataset for dev purposes 
@@ -395,9 +415,11 @@ Dictionary::Dictionary(string fname, int tsize){
  } 
 
  int main (int argc, char* argv[]){
-
+  
   //read from the file:
-    readFromFile(argv[1]); 
+  Dictionary d = readFromFile(argv[1]); 
+  //write it to file passed in arg 2
+  d.writeToFile(argv[2]); 
 
   return 0; 
  }

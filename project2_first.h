@@ -17,7 +17,7 @@ class Dictionary {
 
  public: 
  //default (probably) just for dev purposes
-
+ Dictionary();
  //constructor with string fname and int tsize
  Dictionary(string fname, int tsize); 
 
