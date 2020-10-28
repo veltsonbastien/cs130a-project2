@@ -1,38 +1,38 @@
-#ifndef PROJECT2FIRST
-#define PROJECT2FIRST
+// #ifndef PROJECT2FIRST
+// #define PROJECT2FIRST
 
-using namespace std;
-#include "hash24.h" 
-#include <string>
-#include <vector> 
-#include <utility>
+// using namespace std;
+// #include "hash24.h" 
+// #include <string>
+// #include <vector> 
+// #include <utility>
 
-class Dictionary {
+// class Dictionary {
  
- private: 
-  //save the initial hash
-  Hash24 primaryHash; 
-  //Hash Table Vector
-  vector<pair<string, pair<vector<string>*,Hash24>>> hashtable; 
+//  private: 
+//   //save the initial hash
+//   Hash24 primaryHash; 
+//   //Hash Table Vector
+//   vector<pair<string, pair<vector<string>*,Hash24>>> hashtable; 
 
- public: 
- //default (probably) just for dev purposes
- Dictionary();
- //constructor with string fname and int tsize
- Dictionary(string fname, int tsize); 
+//  public: 
+//  //default (probably) just for dev purposes
+//  Dictionary();
+//  //constructor with string fname and int tsize
+//  Dictionary(string fname, int tsize); 
 
- //boolean for finding word 
- bool find(string word); 
+//  //boolean for finding word 
+//  bool find(string word); 
  
- //writeToFile 
- void writeToFile(string fName); 
+//  //writeToFile 
+//  void writeToFile(string fName); 
 
- //readFromFile 
- static Dictionary readFromFile(string fName); 
-
-
-};
+//  //readFromFile 
+//  static Dictionary readFromFile(string fName); 
 
 
+// };
 
-#endif
+
+
+// #endif

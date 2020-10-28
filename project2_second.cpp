@@ -1,35 +1,26 @@
-#include "project2_first.h" //include the first file's header so you can access the calls to the objects 
+#include "dictionary.h"
 #include "hash24.h"
 #include <iostream>
 #include <fstream> 
 #include <string>
 #include <vector>
 #include <utility>
-
 using namespace std; 
-
-//  //readFrom
-// static Dictionary readFromFile(string fName){
-//        // Object to read from file
-//     ifstream dictionary_object;
- 
-//     // Opening file in input mode
-//     dictionary_object.open(fName, ios::in);
-    
-//     dictionary_object.seekg(0);
-//     // Object of class contestant to input data in file
-    
-//     Dictionary read_dictionary;
-
-//     dictionary_object.read((char*)&read_dictionary, sizeof(read_dictionary));
-
-//     return read_dictionary; 
-//  }
 
 
 int main (int argc, char* argv[]){
     string argument = argv[2]; 
     string token = ", ";
+
+
+
+    // Dictionary d = Dictionary::readFromFile(argv[1]);
+
+    //for testing purposes
+    Dictionary d ("PA2_dataset_10000.txt", 10000);
+
+
+
     vector<string> result;
         while(argument.length()){
             int index = argument.find(token);
@@ -44,7 +35,7 @@ int main (int argc, char* argv[]){
         }
     //find each word 
     for(string s: result){
-        (Dictionary::readFromFile(argv[1])).find(s); 
+        d.find(s); 
     }
 
 
