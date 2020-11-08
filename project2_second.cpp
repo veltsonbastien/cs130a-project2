@@ -12,14 +12,13 @@ int main (int argc, char* argv[]){
     string argument = argv[2]; 
     string token = ", ";
 
+ 
 
+     Dictionary d = Dictionary::readFromFile(argv[1]);
 
-    // Dictionary d = Dictionary::readFromFile(argv[1]);
 
     //for testing purposes
-    Dictionary d ("PA2_dataset_10000.txt", 10000);
-
-
+    //Dictionary d ("PA2_dataset_10000.txt", 10000);
 
     vector<string> result;
         while(argument.length()){
@@ -33,8 +32,11 @@ int main (int argc, char* argv[]){
                 argument = "";
             }
         }
+
+       
     //find each word 
     for(string s: result){
+     
         d.find(s); 
     }
 

@@ -5,11 +5,13 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <cstring>
 
 using namespace std; 
 
 
 Dictionary::Dictionary(){
+
 
 }
 
@@ -75,24 +77,9 @@ Dictionary::Dictionary(string fname, int tsize){
 
   //AND HERE! ^^^
   //close the file at the end 
-      //readObject.clear(); //stack overflow said to do this
+      //readObject.clear();
       //readObject.close(); 
       } //end of while loop
-
- 
-      // int totalprint = 10; 
-      // int howmuchtoprint1 = 0;
-      // for(vector<string> vector: tempVector){
-      //   if(howmuchtoprint1 < totalprint){
-      //   int counti = 0; 
-      //  for(string s: vector){
-      //    cout<<s<<",";
-      //  }
-      //  counti++;
-      //  cout<<counti<<endl;
-      //   howmuchtoprint1++; 
-      //   }
-      // }
 
   //START THE SECOND PASS 
   for(int i = 0; i<tsize; i++){
@@ -437,19 +424,155 @@ Dictionary::Dictionary(string fname, int tsize){
 
  //writeToFile 
  void Dictionary::writeToFile(string fName){
-    ofstream output; 
-    output.open(fName, ios::app);
-    output.write((char*)this, sizeof(Dictionary)); 
-    output.close();
+   //set up the file
+    fstream output; 
+    output.open(fName, ios::in|ios::out|ios::binary); 
+
+    //write out the size of the table 
+    int sizeOfTable = hashtable.size(); 
+    output.write((char*)&sizeOfTable, sizeof(sizeOfTable)); 
+
+    //next let's get the primary hash 
+    output.write((char*)&(primaryHash), sizeof(primaryHash));
+
+
+   //  for(int i = 0; i<hashtable.size(); i++){
+     for(int i = 0; i<sizeOfTable; i++){
+ 
+        string& primaryString = hashtable.at(i).first; 
+
+        size_t primaryStringLength = primaryString.size(); 
+        output.write((char*)&primaryStringLength,sizeof(primaryStringLength));
+    
+        if(primaryStringLength == 0) { continue; }
+
+        //write string: 
+        output.write(primaryString.c_str(), primaryStringLength);
+
+      
+      //get table size if it exists
+      if(hashtable.at(i).second.first != nullptr){
+        int secondaryTableSize = hashtable.at(i).second.first->size(); 
+       // cout<<"secondary table size: "<<secondaryTableSize<<endl;
+        output.write((char*)&secondaryTableSize, sizeof(secondaryTableSize)); 
+        } else{
+         int secondaryTableSize = 0; 
+         output.write((char*)&secondaryTableSize, sizeof(secondaryTableSize)); 
+       //  cout<<"secondary table size: "<<secondaryTableSize<<endl;
+         continue;
+        }
+
+    
+    // //iterate through second table: 
+        for(int j = 0; j<hashtable.at(i).second.first->size(); j++){
+          string& secondaryString = hashtable.at(i).second.first->at(j); 
+
+          //write out the length
+          size_t secondaryStringLength = secondaryString.size(); 
+          output.write((char*)&secondaryStringLength,sizeof(secondaryStringLength));
+
+          //if that word's length is zero, write that and a blank, and continue:
+          if(secondaryStringLength == 0){ continue; }
+
+          //write string: 
+          output.write(secondaryString.c_str(), secondaryStringLength);
+    
+        } //end of for loop
+
+          //write the hash function
+          output.write((char*)&(hashtable.at(i).second.second), sizeof(hashtable.at(i).second.second)); 
+
+       } //end of outer for iterating through all the elements of the primary hash  
+
+    // //close the file 
+     output.close();
  }
  
 
 //readFromFile binary
  Dictionary Dictionary::readFromFile(string fName){
   Dictionary d; //implemented default just for this
-  ifstream input;
+  fstream input;
   input.open(fName, ios::in);
   input.seekg(0);
-  input.read((char*)&d, sizeof(d)); 
+
+ 
+  //must read stuff in, in the order that it was written, first up the size
+  int tableSize;
+  input.read((char*)&(tableSize), sizeof(tableSize));
+  d.hashtable.resize(tableSize);
+
+  //next the initial hash for that Dictionary 
+  input.read((char*)&d.primaryHash, sizeof(d.primaryHash));
+
+
+    for(int i = 0; i<tableSize; i++){
+        size_t primaryStringLength; 
+        input.read((char*)&primaryStringLength, sizeof(primaryStringLength)); 
+
+       // cout<<"Primary String Length: "<<primaryStringLength<<endl;
+       
+       //if zero, set the string to blank 
+        if(primaryStringLength == 0){
+          d.hashtable.at(i).first = ""; 
+          continue;
+        }
+
+       //write the string 
+        string primaryString; 
+        primaryString.resize(primaryStringLength);
+        input.read(&primaryString[0], primaryStringLength);
+        
+        d.hashtable.at(i).first = primaryString; 
+       // cout<<"Primary String:"<<primaryString<<endl;
+
+        //next thing should be the length of the secondary VECTOR: 
+        int secondaryLength;
+        input.read((char*)&secondaryLength, sizeof(secondaryLength));
+    
+        
+        //cout<<"THE SECONDARY VECTOR LENGTH IS: "<<secondaryLength<<endl; 
+
+        //if I get zero, that means no vector, that means make it null 
+        if(secondaryLength == 0){
+          d.hashtable.at(i).second.first = nullptr; //just make sure to set it to null in case it wasn't before 
+          continue; //continue on because we're done with this iteration 
+        }
+
+       //if it didn't continue, that means we can create a new vector of secondary length
+       d.hashtable.at(i).second.first = new vector<string>(secondaryLength); 
+ 
+        for(int j = 0; j<secondaryLength; j++){
+          size_t secondaryWordLength; 
+          input.read((char*)&secondaryWordLength, sizeof(secondaryWordLength));
+
+          if(secondaryWordLength == 0){
+              d.hashtable.at(i).second.first->at(j) = ""; //set it to blank then continue 
+              continue; 
+           }
+
+          //a word is there so set it
+          string secondaryWord; 
+          
+          //set length of current word to length i read in 
+          secondaryWord.resize(secondaryWordLength); 
+          input.read(&secondaryWord[0], secondaryWordLength);
+
+          //set it in the secondary vector 
+          d.hashtable.at(i).second.first->at(j) = secondaryWord; 
+          
+        }//end of inner for reading in everything
+
+         //after this we should've written in all words, so now we make sure to get that hash 
+        input.read((char*)&(d.hashtable.at(i).second.second), sizeof(d.hashtable.at(i).second.second)); 
+        
+  //       //we should be good to go
+      } //end of outer for iterating through all the elements of the primary hash  
+  
+  //  //literally hoping everything is fine 
+  
+   input.close(); 
+
+
   return d; 
  }
