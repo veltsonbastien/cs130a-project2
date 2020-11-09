@@ -430,7 +430,7 @@ Dictionary::Dictionary(string fname, int tsize){
  void Dictionary::writeToFile(string fName){
    //set up the file
     fstream output; 
-    output.open(fName, ios::in|ios::out|ios::binary); 
+    output.open(fName, ios::out|ios::binary); 
 
     //write out the size of the table 
     int sizeOfTable = hashtable.size(); 
