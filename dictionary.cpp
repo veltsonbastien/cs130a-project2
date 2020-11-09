@@ -18,6 +18,8 @@ Dictionary::Dictionary(){
 Dictionary::Dictionary(string fname, int tsize){
   //the Constructor for the Dictionary class: 
 
+  if(tsize == 0) return;
+
   //FIRST, we need to declare all of our variables we'll need for stats printing: 
     Hash24 currentHash; 
   //Max Collisions as a pair:
@@ -407,6 +409,7 @@ Dictionary::Dictionary(string fname, int tsize){
    //boolean for finding word return true if found, false if not 
    //Does the hash of this word, equal to the word
 
+   if(hashtable.size() == 0 || (hashtable.at(primaryHash.hash(word)%(hashtable.size())).second.first != nullptr) && (hashtable.at(primaryHash.hash(word)%(hashtable.size())).second.first->size()) == 0 ){cout<<"I got a zero somewhere"<<endl; return false;}
    if((hashtable.at(primaryHash.hash(word)%(hashtable.size())).first).compare(word) != 0 ){
     if(hashtable.at(primaryHash.hash(word)%(hashtable.size())).second.first != nullptr && 
        hashtable.at(primaryHash.hash(word)%(hashtable.size())).second.first->at( 
@@ -420,6 +423,7 @@ Dictionary::Dictionary(string fname, int tsize){
    }
     cout<<word<<" found"<<endl;
     return true; 
+
    }
 
  //writeToFile 

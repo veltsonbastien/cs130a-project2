@@ -23,7 +23,7 @@ int main (int argc, char* argv[]){
     vector<string> result;
         while(argument.length()){
             int index = argument.find(token);
-            if(index!=string::npos){
+            if((index!=string::npos) ){
                 result.push_back(argument.substr(0,index));
                 argument = argument.substr(index+token.size());
                 if(argument.size()==0)result.push_back(argument);
